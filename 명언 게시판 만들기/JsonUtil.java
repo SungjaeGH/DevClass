@@ -1,19 +1,51 @@
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class JsonUtil {
 
-    public String createWishSaying(int idx, String content, String author) {
+    public String createWishSaying(WishSaying wishSaying, JsonConcatType type) {
 
-        return String.format("""
-                    {
-                        "id" : %d,
-                        "content" : "%s",
-                        "author" : "%s"
-                    }
-                    """,
-                idx,
-                content,
-                author);
+        return (type.equals(JsonConcatType.SINGLE)) ?
+                String.format("""
+                        {
+                            "id" : %d,
+                            "content" : "%s",
+                            "author" : "%s"
+                        }""",
+                        wishSaying.getIdx(),
+                        wishSaying.getContent(),
+                        wishSaying.getAuthor())
+                :
+                String.format("""
+                        \t{
+                        \t    "id" : %d,
+                        \t    "content" : "%s",
+                        \t    "author" : "%s"
+                        \t}""",
+                        wishSaying.getIdx(),
+                        wishSaying.getContent(),
+                        wishSaying.getAuthor());
+    }
+
+    public String concatWishSayings(ArrayList<WishSaying> wishSayings) {
+
+        StringBuilder sb = new StringBuilder();
+
+        for (int idx = 0; idx < wishSayings.size(); idx++) {
+
+            WishSaying wishSaying = wishSayings.get(idx);
+            String data = createWishSaying(wishSaying, JsonConcatType.MULTI);
+            sb.append(data);
+
+            if (idx != wishSayings.size() - 1) {
+                sb.append(",\n");
+            }
+        }
+
+        sb.insert(0, "[\n");
+        sb.insert(sb.length(), "\n]");
+
+        return sb.toString();
     }
 
     public WishSaying parseWishSaying(String wishSayingStr) {

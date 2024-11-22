@@ -2,6 +2,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class FileUtil {
 
@@ -23,7 +24,24 @@ public class FileUtil {
             DataOutputStream dataOutput = new DataOutputStream(output);
 
             // json 형식으로 문자열 생성
-            String data = jsonUtil.createWishSaying(wishSaying.getIdx(), wishSaying.getContent(), wishSaying.getAuthor());
+            String data = jsonUtil.createWishSaying(wishSaying, JsonConcatType.SINGLE);
+
+            dataOutput.writeUTF(data);
+            dataOutput.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeAllWishSayings(ArrayList<WishSaying> wishSayings) {
+
+        try (FileOutputStream output = new FileOutputStream(this.fileDir)) {
+
+            DataOutputStream dataOutput = new DataOutputStream(output);
+
+            // list에 존재하는 모든 명언들 json 형식으로 합치기
+            String data = jsonUtil.concatWishSayings(wishSayings);
 
             dataOutput.writeUTF(data);
             dataOutput.close();
@@ -88,6 +106,8 @@ public class FileUtil {
 
             wishSaying = jsonUtil.parseWishSaying(wishSayingStr);
 
+        } catch (FileNotFoundException e) {
+            // 해당 파일이 존재하지 않을 때, skip
         } catch (Exception e) {
             e.printStackTrace();
         }

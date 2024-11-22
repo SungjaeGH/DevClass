@@ -57,7 +57,7 @@ public class WiseSayingMain {
                 fileUtil.setFileDir("lastId.txt");
                 fileUtil.writeLastWishSayingIdx(wishSayingIdx);
 
-                System.out.println(wishSayings.size() + "번 명언이 등록되었습니다.");
+                System.out.println(wishSayingIdx + "번 명언이 등록되었습니다.");
 
             } else if (command.equals("목록")) {
 
@@ -75,25 +75,16 @@ public class WiseSayingMain {
                 String idxStr = command.substring(loc + 1);
                 int parseIdx = Integer.parseInt(idxStr);
 
-                int findIdx = -1;
-                for (int idx = 0; idx < wishSayings.size(); idx++) {
-                    WishSaying wishSaying = wishSayings.get(idx);
-                    if (wishSaying.getIdx() == parseIdx) {
-                        findIdx = idx;
-                    }
-                }
-
-                if (findIdx < 0) {
-                    System.out.println(parseIdx + "번 명언은 존재하지 않습니다.");
-
-                } else {
-                    wishSayings.remove(findIdx);
+                if (wishSayings.removeIf(wishSaying -> wishSaying.getIdx() == parseIdx)) {
 
                     // 명언 idx에 해당하는 파일 삭제
-                    fileUtil.setFileDir((findIdx + 1) + ".json");
+                    fileUtil.setFileDir(parseIdx + ".json");
                     fileUtil.deleteWishSaying();
 
                     System.out.println(parseIdx + "번 명령이 삭제되었습니다.");
+
+                } else {
+                    System.out.println(parseIdx + "번 명언은 존재하지 않습니다.");
                 }
 
             } else if (command.contains("수정")) {
@@ -131,6 +122,14 @@ public class WiseSayingMain {
                 // 명언 idx에 해당하는 파일에 명언 정보 저장
                 fileUtil.setFileDir(parseIdx + ".json");
                 fileUtil.writeWishSaying(update);
+
+            } else if (command.equals("빌드")) {
+
+                // 명언 list에 존재하는 모든 명언을 json 파일로 합치기
+                fileUtil.setFileDir("data.json");
+                fileUtil.writeAllWishSayings(wishSayings);
+
+                System.out.println("data.json 파일의 내용이 갱신되었습니다.");
             }
         }
 
