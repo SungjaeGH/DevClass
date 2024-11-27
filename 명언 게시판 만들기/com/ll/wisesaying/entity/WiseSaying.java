@@ -1,10 +1,12 @@
-class WishSaying {
+package com.ll.wisesaying.entity;
+
+public class WiseSaying {
 
     private final int idx;
     private String content;
     private String author;
 
-    public WishSaying(int idx, String content, String author) {
+    public WiseSaying(int idx, String content, String author) {
         this.idx = idx;
         this.content = content;
         this.author = author;
