@@ -1,20 +1,20 @@
-package com.ll.wisesaying.utils;
+package com.ll.wisesaying.global.utils;
 
 import java.util.StringTokenizer;
 
 public class JsonUtil {
 
-    public String createStringJson(String key, String value) {
+    public static String createStringJson(String key, String value) {
 
         return String.format("\"%s\" : \"%s\"", key, value);
     }
 
-    public String createIntJson(String key, int value) {
+    public static String createIntJson(String key, int value) {
 
         return String.format("\"%s\" : %d", key, value);
     }
 
-    public String parseJsonKey(String data) {
+    public static String parseJsonKey(String data) {
 
         String parsedKey = null;
         int loc = data.indexOf(":");
@@ -34,7 +34,7 @@ public class JsonUtil {
         return parsedKey;
     }
 
-    public int parseIntJsonValue(String data) {
+    public static int parseIntJsonValue(String data) {
 
         int parsedValue = 0;
         int loc = data.indexOf(":");
@@ -53,7 +53,7 @@ public class JsonUtil {
         return parsedValue;
     }
 
-    public String parseStringJsonValue(String data) {
+    public static String parseStringJsonValue(String data) {
 
         String parsedValue = null;
         int loc = data.indexOf(":");

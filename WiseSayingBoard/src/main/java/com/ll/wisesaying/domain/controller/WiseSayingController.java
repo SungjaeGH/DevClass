@@ -1,8 +1,8 @@
-package com.ll.wisesaying.controller;
+package com.ll.wisesaying.domain.controller;
 
-import com.ll.wisesaying.dto.RequestRegisterWiseSaying;
-import com.ll.wisesaying.dto.RequestUpdateWiseSaying;
-import com.ll.wisesaying.service.WiseSayingService;
+import com.ll.wisesaying.domain.dto.RequestRegisterWiseSaying;
+import com.ll.wisesaying.domain.dto.RequestUpdateWiseSaying;
+import com.ll.wisesaying.domain.service.WiseSayingService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,14 +16,12 @@ public class WiseSayingController {
     }
 
     public void initWiseSayings() {
-
         wiseSayingService.initWiseSayings();
     }
 
     public void registerWiseSaying(BufferedReader bufferedReader) {
 
         try {
-
             System.out.print("명언 : ");
             String content = bufferedReader.readLine();
 
@@ -67,27 +65,24 @@ public class WiseSayingController {
         String wiseSayingIdxStr = command.substring(command.indexOf('=') + 1);
         int wiseSayingIdx = Integer.parseInt(wiseSayingIdxStr);
 
-        wiseSayingService.checkedWiseSayingExist(wiseSayingIdx).ifPresentOrElse(
-                response -> {
+        wiseSayingService.checkedWiseSayingExist(wiseSayingIdx).ifPresentOrElse(response -> {
 
-                    try {
-                        System.out.println("명언(기존) : " + response.getContent());
-                        System.out.print("명령 : ");
-                        String updateContent = bufferedReader.readLine();
+            try {
+                System.out.println("명언(기존) : " + response.getContent());
+                System.out.print("명령 : ");
+                String updateContent = bufferedReader.readLine();
 
-                        System.out.println("작가(기존) : " + response.getAuthor());
-                        System.out.print("명령 : ");
-                        String updateAuthor = bufferedReader.readLine();
+                System.out.println("작가(기존) : " + response.getAuthor());
+                System.out.print("명령 : ");
+                String updateAuthor = bufferedReader.readLine();
 
-                        RequestUpdateWiseSaying request = new RequestUpdateWiseSaying(wiseSayingIdx, updateContent, updateAuthor);
-                        wiseSayingService.updateWiseSaying(request);
+                RequestUpdateWiseSaying request = new RequestUpdateWiseSaying(wiseSayingIdx, updateContent, updateAuthor);
+                wiseSayingService.updateWiseSaying(request);
 
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                },
-                () -> System.out.println(wiseSayingIdx + "번 명언은 존재하지 않습니다.")
-        );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }, () -> System.out.println(wiseSayingIdx + "번 명언은 존재하지 않습니다."));
     }
 
     public void buildWiseSayings() {

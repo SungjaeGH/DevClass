@@ -1,6 +1,6 @@
 package com.ll.wisesaying;
 
-import com.ll.wisesaying.controller.WiseSayingController;
+import com.ll.wisesaying.domain.controller.WiseSayingController;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

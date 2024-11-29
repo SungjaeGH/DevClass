@@ -1,6 +1,6 @@
-package com.ll.wisesaying.dto;
+package com.ll.wisesaying.domain.dto;
 
-import com.ll.wisesaying.entity.WiseSaying;
+import com.ll.wisesaying.domain.entity.WiseSaying;
 
 public class ResponseUpdateWiseSaying {
 

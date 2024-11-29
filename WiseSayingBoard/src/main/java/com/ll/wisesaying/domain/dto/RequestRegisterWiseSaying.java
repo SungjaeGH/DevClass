@@ -1,4 +1,4 @@
-package com.ll.wisesaying.dto;
+package com.ll.wisesaying.domain.dto;
 
 public record RequestRegisterWiseSaying(String content, String author) {
 }

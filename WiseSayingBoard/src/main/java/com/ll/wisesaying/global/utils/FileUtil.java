@@ -1,4 +1,4 @@
-package com.ll.wisesaying.utils;
+package com.ll.wisesaying.global.utils;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -6,22 +6,38 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
+import static com.ll.wisesaying.global.config.FileConfig.DEFAULT_DB_PATH;
+import static com.ll.wisesaying.global.config.FileConfig.DEFAULT_RESOURCE_PATH;
+
 public class FileUtil {
 
-    private final String fileDir;
-    private String fileName;
+    public static String fullDirPath;
 
-    public FileUtil(String fileDir) {
-        this.fileDir = setDefaultDirPath(fileDir);
+    public static boolean checkFileDirExist(String fileDir) {
+
+        boolean isExist = false;
+        Path path = Paths.get(DEFAULT_RESOURCE_PATH + fileDir);
+
+        if (Files.exists(path) && Files.isDirectory(path)) {
+            fullDirPath = path.toAbsolutePath() + "/";
+            isExist = true;
+        }
+
+        return isExist;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public static void createFileDir(String fileDir) {
+
+        File dir = new File(DEFAULT_DB_PATH + fileDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+            fullDirPath = Paths.get(DEFAULT_RESOURCE_PATH + fileDir).toAbsolutePath() + "/";
+        }
     }
 
-    public void writeStringInFile(String data) {
+    public static void writeStringInFile(String fileName, String data) {
 
-        try (FileOutputStream output = new FileOutputStream(fileDir + fileName)) {
+        try (FileOutputStream output = new FileOutputStream(fullDirPath + fileName)) {
 
             DataOutputStream dataOutput = new DataOutputStream(output);
             dataOutput.writeUTF(data);
@@ -32,9 +48,9 @@ public class FileUtil {
         }
     }
 
-    public void writeIntInFile(int data) {
+    public static void writeIntInFile(String fileName, int data) {
 
-        try (FileOutputStream output = new FileOutputStream(fileDir + fileName)) {
+        try (FileOutputStream output = new FileOutputStream(fullDirPath + fileName)) {
 
             DataOutputStream dataOutput = new DataOutputStream(output);
             dataOutput.writeInt(data);
@@ -46,11 +62,11 @@ public class FileUtil {
 
     }
 
-    public Optional<String> getStringInFile() {
+    public static Optional<String> getStringInFile(String fileName) {
 
         StringBuilder data = new StringBuilder();
 
-        try (FileInputStream input = new FileInputStream(fileDir + fileName)) {
+        try (FileInputStream input = new FileInputStream(fullDirPath + fileName)) {
 
             DataInputStream dataInput = new DataInputStream(input);
             data.append(dataInput.readUTF());
@@ -67,11 +83,11 @@ public class FileUtil {
                 .map(Object::toString);
     }
 
-    public int getIntInFile() {
+    public static int getIntInFile(String fileName) {
 
         int data = 0;
 
-        try (FileInputStream input = new FileInputStream(fileDir + fileName)) {
+        try (FileInputStream input = new FileInputStream(fullDirPath + fileName)) {
 
             DataInputStream dataInput = new DataInputStream(input);
             data = dataInput.readInt();
@@ -86,9 +102,9 @@ public class FileUtil {
         return data;
     }
 
-    public void deleteFile() {
+    public static void deleteFile(String fileName) {
 
-        Path filePath = Paths.get(fileDir + fileName);
+        Path filePath = Paths.get(fullDirPath + fileName);
 
         try {
             Files.delete(filePath);
@@ -96,18 +112,5 @@ public class FileUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private String setDefaultDirPath(String fileDir) {
-
-        Path defaultDir = Paths.get("src/main/resources/" + fileDir)
-                .toAbsolutePath();
-
-        File dir = new File(defaultDir.toString());
-        if (!dir.exists()) {
-            dir.mkdirs();
-        }
-
-        return defaultDir + "/";
     }
 }

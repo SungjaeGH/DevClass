@@ -1,19 +1,15 @@
 package com.ll.wisesaying;
 
-import com.ll.wisesaying.controller.WiseSayingController;
-import com.ll.wisesaying.repository.WiseSayingRepository;
-import com.ll.wisesaying.service.WiseSayingService;
-import com.ll.wisesaying.utils.FileUtil;
-import com.ll.wisesaying.utils.JsonUtil;
+import com.ll.wisesaying.domain.controller.WiseSayingController;
+import com.ll.wisesaying.domain.repository.WiseSayingRepository;
+import com.ll.wisesaying.domain.service.WiseSayingService;
 
 public class WiseSayingMain {
     public static void main(String[] args) {
 
         // 인스턴스 생성
-        FileUtil fileUtil = new FileUtil("db/wise-saying/");
-        JsonUtil jsonUtil = new JsonUtil();
         WiseSayingRepository wiseSayingRepository = new WiseSayingRepository();
-        WiseSayingService wiseSayingService = new WiseSayingService(wiseSayingRepository, fileUtil, jsonUtil);
+        WiseSayingService wiseSayingService = new WiseSayingService(wiseSayingRepository);
         WiseSayingController controller = new WiseSayingController(wiseSayingService);
         WiseSayingApp app = new WiseSayingApp(controller);
 
