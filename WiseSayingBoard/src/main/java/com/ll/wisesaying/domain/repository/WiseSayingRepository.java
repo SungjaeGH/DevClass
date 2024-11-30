@@ -24,8 +24,8 @@ public class WiseSayingRepository {
     public void initWiseSayings() {
 
         // DB 파일 저장할 디렉토리 설정
-        if (!FileUtil.checkFileDirExist(DEFAULT_DB_PATH)) {
-            FileUtil.createFileDir(DEFAULT_DB_PATH);
+        if (FileUtil.checkFileDirExist(DEFAULT_RESOURCE_PATH + DEFAULT_DB_PATH)) {
+            FileUtil.createFileDir(DEFAULT_RESOURCE_PATH + DEFAULT_DB_PATH);
         }
 
         // 마지막 명언 Idx 탐색
@@ -136,14 +136,16 @@ public class WiseSayingRepository {
 
             WiseSaying wiseSaying = wiseSayingList.get(idx);
 
-            sb.append("\t");
-            sb.append(makeJsonString(wiseSaying.getIdx(), wiseSaying.getContent(), wiseSaying.getAuthor()));
+            sb.append(String.format("""
+                    \t%s""",
+                    makeJsonString(wiseSaying.getIdx(), wiseSaying.getContent(), wiseSaying.getAuthor())));
+
             if (idx != wiseSayingList.size() - 1) {
                 sb.append(",");
             }
         }
 
-        sb.append("]");
+        sb.append("\n]");
 
         return sb.toString();
     }

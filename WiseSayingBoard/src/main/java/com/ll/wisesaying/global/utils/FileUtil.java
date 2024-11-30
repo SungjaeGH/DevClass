@@ -6,38 +6,35 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Optional;
 
-import static com.ll.wisesaying.global.config.FileConfig.DEFAULT_DB_PATH;
-import static com.ll.wisesaying.global.config.FileConfig.DEFAULT_RESOURCE_PATH;
-
 public class FileUtil {
 
-    public static String fullDirPath;
+    public static Path fullDirPath;
 
     public static boolean checkFileDirExist(String fileDir) {
 
         boolean isExist = false;
-        Path path = Paths.get(DEFAULT_RESOURCE_PATH + fileDir);
+        Path path = Paths.get(fileDir);
 
         if (Files.exists(path) && Files.isDirectory(path)) {
-            fullDirPath = path.toAbsolutePath() + "/";
+            fullDirPath = path;
             isExist = true;
         }
 
-        return isExist;
+        return !isExist;
     }
 
     public static void createFileDir(String fileDir) {
 
-        File dir = new File(DEFAULT_DB_PATH + fileDir);
+        File dir = new File(fileDir);
         if (!dir.exists()) {
             dir.mkdirs();
-            fullDirPath = Paths.get(DEFAULT_RESOURCE_PATH + fileDir).toAbsolutePath() + "/";
+            fullDirPath = Paths.get(fileDir);
         }
     }
 
     public static void writeStringInFile(String fileName, String data) {
 
-        try (FileOutputStream output = new FileOutputStream(fullDirPath + fileName)) {
+        try (FileOutputStream output = new FileOutputStream(fullDirPath.toAbsolutePath() + "/" + fileName)) {
 
             DataOutputStream dataOutput = new DataOutputStream(output);
             dataOutput.writeUTF(data);
@@ -50,7 +47,7 @@ public class FileUtil {
 
     public static void writeIntInFile(String fileName, int data) {
 
-        try (FileOutputStream output = new FileOutputStream(fullDirPath + fileName)) {
+        try (FileOutputStream output = new FileOutputStream(fullDirPath.toAbsolutePath() + "/" + fileName)) {
 
             DataOutputStream dataOutput = new DataOutputStream(output);
             dataOutput.writeInt(data);
@@ -66,7 +63,7 @@ public class FileUtil {
 
         StringBuilder data = new StringBuilder();
 
-        try (FileInputStream input = new FileInputStream(fullDirPath + fileName)) {
+        try (FileInputStream input = new FileInputStream(fullDirPath.toAbsolutePath() + "/" + fileName)) {
 
             DataInputStream dataInput = new DataInputStream(input);
             data.append(dataInput.readUTF());
@@ -87,7 +84,7 @@ public class FileUtil {
 
         int data = 0;
 
-        try (FileInputStream input = new FileInputStream(fullDirPath + fileName)) {
+        try (FileInputStream input = new FileInputStream(fullDirPath.toAbsolutePath() + "/" + fileName)) {
 
             DataInputStream dataInput = new DataInputStream(input);
             data = dataInput.readInt();
@@ -104,7 +101,7 @@ public class FileUtil {
 
     public static void deleteFile(String fileName) {
 
-        Path filePath = Paths.get(fullDirPath + fileName);
+        Path filePath = Paths.get(fullDirPath.toAbsolutePath() + "/" + fileName);
 
         try {
             Files.delete(filePath);
@@ -112,5 +109,23 @@ public class FileUtil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public static void deleteDir(Path path) throws IOException {
+
+        if (Files.isDirectory(path)) {
+
+            Files.list(path).forEach(nextPath -> {
+
+                try {
+                    deleteDir(nextPath);
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+
+        Files.delete(path);
     }
 }

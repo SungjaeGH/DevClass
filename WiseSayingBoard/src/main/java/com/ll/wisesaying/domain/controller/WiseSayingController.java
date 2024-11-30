@@ -52,7 +52,7 @@ public class WiseSayingController {
         String wiseSayingIdxStr = command.substring(command.indexOf('=') + 1);
 
         if (wiseSayingService.removeWiseSaying(Integer.parseInt(wiseSayingIdxStr))) {
-            System.out.println(wiseSayingIdxStr + "번 명령이 삭제되었습니다.");
+            System.out.println(wiseSayingIdxStr + "번 명언이 삭제되었습니다.");
 
         } else {
             System.out.println(wiseSayingIdxStr + "번 명언은 존재하지 않습니다.");

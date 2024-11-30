@@ -42,14 +42,13 @@ public class WiseSayingService {
     }
 
     public Optional<ResponseUpdateWiseSaying> checkedWiseSayingExist(int wiseSayingIdx) {
-
-        ResponseUpdateWiseSaying responseUpdateWiseSaying = new ResponseUpdateWiseSaying();
-
-        wiseSayingRepository.findByWiseSayingIdx(wiseSayingIdx).ifPresent(responseUpdateWiseSaying::UpdateResponse);
-
-        return Optional.of(responseUpdateWiseSaying);
+        return wiseSayingRepository.findByWiseSayingIdx(wiseSayingIdx)
+                .map(responseUpdateWiseSaying -> {
+                    ResponseUpdateWiseSaying response = new ResponseUpdateWiseSaying();
+                    response.UpdateResponse(responseUpdateWiseSaying);
+                    return response;
+                });
     }
-
 
     public void updateWiseSaying(RequestUpdateWiseSaying request) {
         wiseSayingRepository.updateWiseSaying(request.toEntity());
