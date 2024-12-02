@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.ll.wisesaying.global.config.FileConfig.*;
@@ -65,6 +66,18 @@ public class WiseSayingRepository {
 
     public List<WiseSaying> findAllWiseSayings() {
         return wiseSayings;
+    }
+
+    public List<WiseSaying> findAllWiseSayingsByKeyword(String type, String value) {
+
+        return type.equals("content") ?
+                wiseSayings.stream()
+                        .filter(wiseSaying -> wiseSaying.getContent().contains(value))
+                        .collect(Collectors.toList())
+                :
+                wiseSayings.stream()
+                        .filter(wiseSaying -> wiseSaying.getAuthor().contains(value))
+                        .collect(Collectors.toList());
     }
 
     public Optional<WiseSaying> findByWiseSayingIdx(int wiseSayingIdx) {

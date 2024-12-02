@@ -1,5 +1,6 @@
 package com.ll.wisesaying.domain.controller;
 
+import com.ll.wisesaying.domain.dto.RequestFindWiseSayingByKeyword;
 import com.ll.wisesaying.domain.dto.RequestRegisterWiseSaying;
 import com.ll.wisesaying.domain.dto.RequestUpdateWiseSaying;
 import com.ll.wisesaying.domain.service.WiseSayingService;
@@ -38,32 +39,50 @@ public class WiseSayingController {
         }
     }
 
-    public void showWiseSayings() {
+    public void showWiseSayings(String command) {
+
+        String wiseSayings;
+
+        if (command.contains("keyword")) {
+            String[] keywordTypeGroup = parseKeywordGroup(command.substring(command.indexOf("?") + 1, command.indexOf("&")));
+            String[] keywordGroup = parseKeywordGroup(command.substring(command.indexOf("&") + 1));
+
+            RequestFindWiseSayingByKeyword request = new RequestFindWiseSayingByKeyword(keywordTypeGroup[1], keywordGroup[1]);
+            System.out.println("-------------------------");
+            System.out.println("검색타입 : " + request.type());
+            System.out.println("검색어 : " + request.value());
+            System.out.println("-------------------------");
+
+            wiseSayings = wiseSayingService.findWiseSayings(request);
+
+        } else {
+            wiseSayings = wiseSayingService.findWiseSayings();
+
+        }
 
         System.out.println("번호 / 작가 / 명언");
         System.out.println("-------------------------");
-
-        String wiseSayings = wiseSayingService.findWiseSayings();
         System.out.println(wiseSayings);
     }
 
     public void deleteWiseSaying(String command) {
 
-        String wiseSayingIdxStr = command.substring(command.indexOf('=') + 1);
+        String[] keywordGroup = parseKeywordGroup(command.substring(command.indexOf("?") + 1));
+        int wiseSayingIdx = Integer.parseInt(keywordGroup[1]);
 
-        if (wiseSayingService.removeWiseSaying(Integer.parseInt(wiseSayingIdxStr))) {
-            System.out.println(wiseSayingIdxStr + "번 명언이 삭제되었습니다.");
+        if (wiseSayingService.removeWiseSaying(wiseSayingIdx)) {
+            System.out.println(wiseSayingIdx + "번 명언이 삭제되었습니다.");
 
         } else {
-            System.out.println(wiseSayingIdxStr + "번 명언은 존재하지 않습니다.");
+            System.out.println(wiseSayingIdx + "번 명언은 존재하지 않습니다.");
 
         }
     }
 
     public void updateWiseSaying(String command, BufferedReader bufferedReader) {
 
-        String wiseSayingIdxStr = command.substring(command.indexOf('=') + 1);
-        int wiseSayingIdx = Integer.parseInt(wiseSayingIdxStr);
+        String[] keywordGroup = parseKeywordGroup(command.substring(command.indexOf("?") + 1));
+        int wiseSayingIdx = Integer.parseInt(keywordGroup[1]);
 
         wiseSayingService.checkedWiseSayingExist(wiseSayingIdx).ifPresentOrElse(response -> {
 
@@ -89,5 +108,17 @@ public class WiseSayingController {
 
         wiseSayingService.updateAllWiseSayings();
         System.out.println("data.json 파일의 내용이 갱신되었습니다.");
+    }
+
+    private String[] parseKeywordGroup(String content) {
+        return new String[]{parseKeywordKey(content), parseKeywordValue(content)};
+    }
+
+    private String parseKeywordKey(String content) {
+        return content.substring(0, content.indexOf("="));
+    }
+
+    private String parseKeywordValue(String content) {
+        return content.substring(content.indexOf("=") + 1);
     }
 }

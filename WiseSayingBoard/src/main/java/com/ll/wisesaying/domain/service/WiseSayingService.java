@@ -1,5 +1,6 @@
 package com.ll.wisesaying.domain.service;
 
+import com.ll.wisesaying.domain.dto.RequestFindWiseSayingByKeyword;
 import com.ll.wisesaying.domain.dto.RequestRegisterWiseSaying;
 import com.ll.wisesaying.domain.dto.RequestUpdateWiseSaying;
 import com.ll.wisesaying.domain.dto.ResponseUpdateWiseSaying;
@@ -30,6 +31,18 @@ public class WiseSayingService {
         StringBuilder sb = new StringBuilder();
 
         List<WiseSaying> wiseSayings = wiseSayingRepository.findAllWiseSayings();
+        wiseSayings.forEach(wiseSaying ->
+                sb.append(String.format("%d / %s / %s\n",
+                        wiseSaying.getIdx(), wiseSaying.getAuthor(), wiseSaying.getContent())));
+
+        return sb.toString();
+    }
+
+    public String findWiseSayings(RequestFindWiseSayingByKeyword request) {
+
+        StringBuilder sb = new StringBuilder();
+
+        List<WiseSaying> wiseSayings = wiseSayingRepository.findAllWiseSayingsByKeyword(request.type(), request.value());
         wiseSayings.forEach(wiseSaying ->
                 sb.append(String.format("%d / %s / %s\n",
                         wiseSaying.getIdx(), wiseSaying.getAuthor(), wiseSaying.getContent())));

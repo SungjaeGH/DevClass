@@ -35,8 +35,8 @@ public class WiseSayingApp {
 
                     controller.registerWiseSaying(bufferedReader);
 
-                } else if (command.equals("목록")) {
-                    controller.showWiseSayings();
+                } else if (command.contains("목록")) {
+                    controller.showWiseSayings(command);
 
                 } else if (command.contains("삭제")) {
                     controller.deleteWiseSaying(command);

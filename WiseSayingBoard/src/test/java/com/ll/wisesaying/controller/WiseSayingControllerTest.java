@@ -70,7 +70,7 @@ class WiseSayingControllerTest extends TestUtil {
         wiseSayingRepository.savedWiseSaying("명언1", "작가1", true);
 
         // when
-        wiseSayingController.showWiseSayings();
+        wiseSayingController.showWiseSayings("목록");
 
         // then
         String outputString = output.toString().trim();
@@ -204,6 +204,107 @@ class WiseSayingControllerTest extends TestUtil {
         // then
 
         assertThat(output.toString().trim()).contains("data.json 파일의 내용이 갱신되었습니다.");
+
+        clearSetOutToByteArray(output);
+    }
+
+    @Test
+    @DisplayName("명언 목록 조회 : 명언 type과 일치하는 검색 결과가 있을 경우")
+    void matchContentKeywordInWiseSayings() {
+
+        // given
+        ByteArrayOutputStream output = setOutToByteArray();
+        wiseSayingRepository.savedWiseSaying("명언1", "작가1", true);
+        wiseSayingRepository.savedWiseSaying("명언2", "작가2", true);
+
+        // when
+        wiseSayingController.showWiseSayings("목록?keywordType=content&keyword=명언");
+
+        // then
+        List<WiseSaying> testResult = wiseSayingRepository.findAllWiseSayingsByKeyword("content", "명언");
+        assertThat(testResult.size()).isEqualTo(2);
+        WiseSaying first = testResult.get(0);
+        assertThat(first.getContent()).contains("명언1");
+        assertThat(first.getAuthor()).contains("작가1");
+
+        WiseSaying second = testResult.get(1);
+        assertThat(second.getContent()).contains("명언2");
+        assertThat(second.getAuthor()).contains("작가2");
+
+        String outputString = output.toString().trim();
+        String[] outputParts = outputString.split("\n");
+
+        assertThat(outputParts[0]).contains("-------------------------");
+        assertThat(outputParts[1]).contains("검색타입 : content");
+        assertThat(outputParts[2]).contains("검색어 : 명언");
+        assertThat(outputParts[3]).contains("-------------------------");
+        assertThat(outputParts[4]).contains("번호 / 작가 / 명언");
+        assertThat(outputParts[5]).contains("-------------------------");
+
+        clearSetOutToByteArray(output);
+    }
+
+    @Test
+    @DisplayName("명언 목록 조회 : 작가 type과 일치하는 검색 결과가 있을 경우")
+    void matchAuthorKeywordInWiseSayings() {
+
+        // given
+        ByteArrayOutputStream output = setOutToByteArray();
+        wiseSayingRepository.savedWiseSaying("명언1", "작가1", true);
+        wiseSayingRepository.savedWiseSaying("명언2", "작가2", true);
+
+        // when
+        wiseSayingController.showWiseSayings("목록?keywordType=author&keyword=작가");
+
+        // then
+        List<WiseSaying> testResult = wiseSayingRepository.findAllWiseSayingsByKeyword("author", "작가");
+        assertThat(testResult.size()).isEqualTo(2);
+        WiseSaying first = testResult.get(0);
+        assertThat(first.getContent()).contains("명언1");
+        assertThat(first.getAuthor()).contains("작가1");
+
+        WiseSaying second = testResult.get(1);
+        assertThat(second.getContent()).contains("명언2");
+        assertThat(second.getAuthor()).contains("작가2");
+
+        String outputString = output.toString().trim();
+        String[] outputParts = outputString.split("\n");
+
+        assertThat(outputParts[0]).contains("-------------------------");
+        assertThat(outputParts[1]).contains("검색타입 : author");
+        assertThat(outputParts[2]).contains("검색어 : 작가");
+        assertThat(outputParts[3]).contains("-------------------------");
+        assertThat(outputParts[4]).contains("번호 / 작가 / 명언");
+        assertThat(outputParts[5]).contains("-------------------------");
+
+        clearSetOutToByteArray(output);
+    }
+
+    @Test
+    @DisplayName("명언 목록 조회 : 일치하는 검색 결과가 없을 경우")
+    void noMatchKeywordInWiseSayings() {
+
+        // given
+        ByteArrayOutputStream output = setOutToByteArray();
+        wiseSayingRepository.savedWiseSaying("명언1", "작가1", true);
+        wiseSayingRepository.savedWiseSaying("명언2", "작가2", true);
+
+        // when
+        wiseSayingController.showWiseSayings("목록?keywordType=author&keyword=없음");
+
+        // then
+        List<WiseSaying> testResult = wiseSayingRepository.findAllWiseSayingsByKeyword("author", "없음");
+        assertThat(testResult.size()).isEqualTo(0);
+
+        String outputString = output.toString().trim();
+        String[] outputParts = outputString.split("\n");
+
+        assertThat(outputParts[0]).contains("-------------------------");
+        assertThat(outputParts[1]).contains("검색타입 : author");
+        assertThat(outputParts[2]).contains("검색어 : 없음");
+        assertThat(outputParts[3]).contains("-------------------------");
+        assertThat(outputParts[4]).contains("번호 / 작가 / 명언");
+        assertThat(outputParts[3]).contains("-------------------------");
 
         clearSetOutToByteArray(output);
     }
