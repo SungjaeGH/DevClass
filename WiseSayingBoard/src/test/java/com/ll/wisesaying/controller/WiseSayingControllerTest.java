@@ -308,4 +308,179 @@ class WiseSayingControllerTest extends TestUtil {
 
         clearSetOutToByteArray(output);
     }
+
+    @Test
+    @DisplayName("명언 목록 조회 : 1 페이지 목록 확인")
+    void showWiseSayingsByPaging1() {
+
+        // given
+        ByteArrayOutputStream output = setOutToByteArray();
+        for (int idx = 1; idx <= 10; idx++) {
+            wiseSayingRepository.savedWiseSaying("명언" + idx, "작가" + idx, true);
+        }
+
+        // when
+        wiseSayingController.showWiseSayings("목록?page=1");
+
+        // then
+        List<WiseSaying> findResult = wiseSayingRepository.findAllWiseSayings();
+        List<WiseSaying> pagingResult = wiseSayingRepository.findWiseSayingsByPagingDesc(findResult, 1, 5);
+
+        assertThat(pagingResult.size()).isEqualTo(5);
+
+        String outputString = output.toString().trim();
+        String[] outputParts = outputString.split("\n");
+
+        assertThat(outputParts[0]).contains("번호 / 작가 / 명언");
+        assertThat(outputParts[1]).contains("-------------------------");
+        assertThat(outputParts[2]).contains("10 / 작가10 / 명언10");
+        assertThat(outputParts[3]).contains("9 / 작가9 / 명언9");
+        assertThat(outputParts[4]).contains("8 / 작가8 / 명언8");
+        assertThat(outputParts[5]).contains("7 / 작가7 / 명언7");
+        assertThat(outputParts[6]).contains("6 / 작가6 / 명언6");
+        assertThat(outputParts[7]).contains("-------------------------");
+        assertThat(outputParts[8]).contains("페이지 : [1] / 2");
+
+        clearSetOutToByteArray(output);
+    }
+
+    @Test
+    @DisplayName("명언 목록 조회 : 2 페이지 목록 확인")
+    void showWiseSayingsByPaging2() {
+
+        // given
+        ByteArrayOutputStream output = setOutToByteArray();
+        for (int idx = 1; idx <= 10; idx++) {
+            wiseSayingRepository.savedWiseSaying("명언" + idx, "작가" + idx, true);
+        }
+
+        // when
+        wiseSayingController.showWiseSayings("목록?page=2");
+
+        // then
+        List<WiseSaying> findResult = wiseSayingRepository.findAllWiseSayings();
+        List<WiseSaying> pagingResult = wiseSayingRepository.findWiseSayingsByPagingDesc(findResult, 2, 5);
+
+        assertThat(pagingResult.size()).isEqualTo(5);
+
+        String outputString = output.toString().trim();
+        String[] outputParts = outputString.split("\n");
+
+        assertThat(outputParts[0]).contains("번호 / 작가 / 명언");
+        assertThat(outputParts[1]).contains("-------------------------");
+        assertThat(outputParts[2]).contains("5 / 작가5 / 명언5");
+        assertThat(outputParts[3]).contains("4 / 작가4 / 명언4");
+        assertThat(outputParts[4]).contains("3 / 작가3 / 명언3");
+        assertThat(outputParts[5]).contains("2 / 작가2 / 명언2");
+        assertThat(outputParts[6]).contains("1 / 작가1 / 명언1");
+        assertThat(outputParts[7]).contains("-------------------------");
+        assertThat(outputParts[8]).contains("페이지 : 1 / [2]");
+
+        clearSetOutToByteArray(output);
+    }
+
+    @Test
+    @DisplayName("명언 목록 조회 : 페이지 번호를 생략했을 경우")
+    void showWiseSayingsBySkipPaging() {
+
+        // given
+        ByteArrayOutputStream output = setOutToByteArray();
+        for (int idx = 1; idx <= 10; idx++) {
+            wiseSayingRepository.savedWiseSaying("명언" + idx, "작가" + idx, true);
+        }
+
+        // when
+        wiseSayingController.showWiseSayings("목록");
+
+        // then
+        List<WiseSaying> findResult = wiseSayingRepository.findAllWiseSayings();
+        List<WiseSaying> pagingResult = wiseSayingRepository.findWiseSayingsByPagingDesc(findResult, 1, 5);
+
+        assertThat(pagingResult.size()).isEqualTo(5);
+
+        String outputString = output.toString().trim();
+        String[] outputParts = outputString.split("\n");
+
+        assertThat(outputParts[0]).contains("번호 / 작가 / 명언");
+        assertThat(outputParts[1]).contains("-------------------------");
+        assertThat(outputParts[2]).contains("10 / 작가10 / 명언10");
+        assertThat(outputParts[3]).contains("9 / 작가9 / 명언9");
+        assertThat(outputParts[4]).contains("8 / 작가8 / 명언8");
+        assertThat(outputParts[5]).contains("7 / 작가7 / 명언7");
+        assertThat(outputParts[6]).contains("6 / 작가6 / 명언6");
+        assertThat(outputParts[7]).contains("-------------------------");
+        assertThat(outputParts[8]).contains("페이지 : [1] / 2");
+
+        clearSetOutToByteArray(output);
+    }
+
+    @Test
+    @DisplayName("명언 목록 조회 : 검색어와 함께 조회했을 경우")
+    void showWiseSayingsByPagingWithKeyword() {
+
+        // given
+        ByteArrayOutputStream output = setOutToByteArray();
+        for (int idx = 1; idx <= 10; idx++) {
+            wiseSayingRepository.savedWiseSaying("명언" + idx, "작가" + idx, true);
+        }
+
+        // when
+        wiseSayingController.showWiseSayings("목록?keywordType=author&keyword=작가1&page=1");
+
+        // then
+        List<WiseSaying> findResult = wiseSayingRepository.findAllWiseSayingsByKeyword("author", "작가1");
+        List<WiseSaying> pagingResult = wiseSayingRepository.findWiseSayingsByPagingDesc(findResult, 1, 5);
+
+        assertThat(pagingResult.size()).isEqualTo(2);
+
+        String outputString = output.toString().trim();
+        String[] outputParts = outputString.split("\n");
+
+        assertThat(outputParts[0]).contains("-------------------------");
+        assertThat(outputParts[1]).contains("검색타입 : author");
+        assertThat(outputParts[2]).contains("검색어 : 작가1");
+        assertThat(outputParts[3]).contains("-------------------------");
+        assertThat(outputParts[4]).contains("번호 / 작가 / 명언");
+        assertThat(outputParts[5]).contains("-------------------------");
+        assertThat(outputParts[6]).contains("10 / 작가10 / 명언10");
+        assertThat(outputParts[7]).contains("1 / 작가1 / 명언1");
+        assertThat(outputParts[8]).contains("-------------------------");
+        assertThat(outputParts[9]).contains("페이지 : [1]");
+
+        clearSetOutToByteArray(output);
+    }
+
+    @Test
+    @DisplayName("명언 목록 조회 : 찾을 명언이 존재하지 않을 경우")
+    void noShowWiseSayingsByPaging() {
+
+        // given
+        ByteArrayOutputStream output = setOutToByteArray();
+        for (int idx = 1; idx <= 10; idx++) {
+            wiseSayingRepository.savedWiseSaying("명언" + idx, "작가" + idx, true);
+        }
+
+        // when
+        wiseSayingController.showWiseSayings("목록?keywordType=author&keyword=없음&page=2");
+
+        // then
+        List<WiseSaying> findResult = wiseSayingRepository.findAllWiseSayingsByKeyword("author", "없음");
+        List<WiseSaying> pagingResult = wiseSayingRepository.findWiseSayingsByPagingDesc(findResult, 2, 5);
+
+        assertThat(pagingResult.size()).isEqualTo(0);
+
+        String outputString = output.toString().trim();
+        String[] outputParts = outputString.split("\n");
+
+        assertThat(outputParts[0]).contains("-------------------------");
+        assertThat(outputParts[1]).contains("검색타입 : author");
+        assertThat(outputParts[2]).contains("검색어 : 없음");
+        assertThat(outputParts[3]).contains("-------------------------");
+        assertThat(outputParts[4]).contains("번호 / 작가 / 명언");
+        assertThat(outputParts[5]).contains("-------------------------");
+        assertThat(outputParts[6]).contains("-------------------------");
+        assertThat(outputParts[7]).contains("페이지 : [1]");
+
+        clearSetOutToByteArray(output);
+    }
 }

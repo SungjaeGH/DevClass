@@ -1,9 +1,6 @@
 package com.ll.wisesaying.domain.service;
 
-import com.ll.wisesaying.domain.dto.RequestFindWiseSayingByKeyword;
-import com.ll.wisesaying.domain.dto.RequestRegisterWiseSaying;
-import com.ll.wisesaying.domain.dto.RequestUpdateWiseSaying;
-import com.ll.wisesaying.domain.dto.ResponseUpdateWiseSaying;
+import com.ll.wisesaying.domain.dto.*;
 import com.ll.wisesaying.domain.entity.WiseSaying;
 import com.ll.wisesaying.domain.repository.WiseSayingRepository;
 
@@ -26,28 +23,46 @@ public class WiseSayingService {
         return wiseSayingRepository.savedWiseSaying(request.content(), request.author(), true);
     }
 
-    public String findWiseSayings() {
+    public ResponseFindWiseSayings findWiseSayings() {
 
         StringBuilder sb = new StringBuilder();
 
         List<WiseSaying> wiseSayings = wiseSayingRepository.findAllWiseSayings();
-        wiseSayings.forEach(wiseSaying ->
+        List<WiseSaying> sortedList = wiseSayingRepository.findWiseSayingsByPagingDesc(wiseSayings, 1, 5);
+        sortedList.forEach(wiseSaying ->
                 sb.append(String.format("%d / %s / %s\n",
                         wiseSaying.getIdx(), wiseSaying.getAuthor(), wiseSaying.getContent())));
 
-        return sb.toString();
+        return new ResponseFindWiseSayings(
+                1,
+                wiseSayings.isEmpty() ? 1 : (int) Math.ceil((double) wiseSayings.size() / 5),
+                sb.toString());
     }
 
-    public String findWiseSayings(RequestFindWiseSayingByKeyword request) {
+    public ResponseFindWiseSayings findWiseSayings(RequestFindWiseSayingByOption request) {
 
         StringBuilder sb = new StringBuilder();
+        List<WiseSaying> wiseSayings;
 
-        List<WiseSaying> wiseSayings = wiseSayingRepository.findAllWiseSayingsByKeyword(request.type(), request.value());
-        wiseSayings.forEach(wiseSaying ->
+        if (request.getKeyword() == null && request.getKeywordType() == null) {
+            wiseSayings = wiseSayingRepository.findAllWiseSayings();
+
+        } else {
+            wiseSayings = wiseSayingRepository.findAllWiseSayingsByKeyword(request.getKeywordType(), request.getKeyword());
+        }
+
+        List<WiseSaying> sortedList = wiseSayingRepository.findWiseSayingsByPagingDesc(wiseSayings, request.getPageIdx(), 5);
+        sortedList.forEach(wiseSaying ->
                 sb.append(String.format("%d / %s / %s\n",
                         wiseSaying.getIdx(), wiseSaying.getAuthor(), wiseSaying.getContent())));
 
-        return sb.toString();
+        int pageNum = request.getPageIdx();
+        int pageMax = wiseSayings.isEmpty() ? 1 : (int) Math.ceil((double) wiseSayings.size() / 5);
+
+        return new ResponseFindWiseSayings(
+                (pageNum > pageMax) ? 1 : pageNum,
+                pageMax,
+                sb.toString());
     }
 
     public boolean removeWiseSaying(int wiseSayingIdx) {

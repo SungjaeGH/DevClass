@@ -4,13 +4,11 @@ import com.ll.wisesaying.domain.entity.WiseSaying;
 import com.ll.wisesaying.global.utils.FileUtil;
 import com.ll.wisesaying.global.utils.JsonUtil;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.ll.wisesaying.global.config.CommandConfig.*;
 import static com.ll.wisesaying.global.config.FileConfig.*;
 
 public class WiseSayingRepository {
@@ -70,7 +68,7 @@ public class WiseSayingRepository {
 
     public List<WiseSaying> findAllWiseSayingsByKeyword(String type, String value) {
 
-        return type.equals("content") ?
+        return type.equals(COMMAND_SHOW_OPTION_KEYWORD_TYPE_CONTENT) ?
                 wiseSayings.stream()
                         .filter(wiseSaying -> wiseSaying.getContent().contains(value))
                         .collect(Collectors.toList())
@@ -117,6 +115,22 @@ public class WiseSayingRepository {
 
     public int findLastWiseSayingIdx() {
         return lastIdx;
+    }
+
+    public List<WiseSaying> findWiseSayingsByPagingDesc(List<WiseSaying> target, int pageNum, int pageSize) {
+
+        // idx 순서대로 내림차순 하도록 설정
+        target.sort(Comparator.comparingInt(WiseSaying::getIdx).reversed());
+
+        // 찾을 페이지 번호가 명언 list보다 클 경우, 1 페이지로 설정
+        if (pageNum == 0 || pageNum > Math.ceil((double) target.size() / pageSize)) {
+            pageNum = 1;
+        }
+
+        return target.stream()
+                .skip((long) pageSize * (pageNum - 1))
+                .limit(pageSize)
+                .toList();
     }
 
     private WiseSaying parseWiseSayingInJson(String jsonString) {
