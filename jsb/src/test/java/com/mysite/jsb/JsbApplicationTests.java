@@ -1,5 +1,9 @@
 package com.mysite.jsb;
 
+import com.mysite.jsb.answer.Answer;
+import com.mysite.jsb.answer.AnswerRepository;
+import com.mysite.jsb.question.Question;
+import com.mysite.jsb.question.QuestionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

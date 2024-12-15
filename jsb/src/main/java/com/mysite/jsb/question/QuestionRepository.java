@@ -1,5 +1,6 @@
-package com.mysite.jsb;
+package com.mysite.jsb.question;
 
+import com.mysite.jsb.question.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

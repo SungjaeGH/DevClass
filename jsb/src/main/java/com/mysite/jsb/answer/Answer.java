@@ -1,5 +1,6 @@
-package com.mysite.jsb;
+package com.mysite.jsb.answer;
 
+import com.mysite.jsb.question.Question;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
