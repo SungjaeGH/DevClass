@@ -15,7 +15,10 @@
     </thead>
     <tbody>
     <tr th:each="question : ${questionList}">
-        <td th:text="${question.subject}"></td>
+        <td>
+            <!-- | 가 없으면 Java 객체의 값을 더할 수 없다. -->
+            <a th:href="@{|/question/detail/${question.id}|}" th:text="${question.subject}"></a>
+        </td>
         <td th:text="${question.createDate}"></td>
     </tr>
     </tbody>
