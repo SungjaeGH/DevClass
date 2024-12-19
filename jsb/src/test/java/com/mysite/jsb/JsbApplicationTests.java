@@ -4,6 +4,7 @@ import com.mysite.jsb.answer.Answer;
 import com.mysite.jsb.answer.AnswerRepository;
 import com.mysite.jsb.question.Question;
 import com.mysite.jsb.question.QuestionRepository;
+import com.mysite.jsb.question.QuestionService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ class JsbApplicationTests {
 
     @Autowired
     private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionService questionService;
 
     @Test
     @DisplayName("question 테이블에 데이터를 삽입한다.")
@@ -229,5 +233,23 @@ class JsbApplicationTests {
         // then
         assertEquals(1, answerList.size());
         assertEquals("네 자동으로 생성됩니다.", answerList.get(0).getContent());
+    }
+
+    @Test
+    @DisplayName("300개 질문 데이터를 생성하기")
+    void createMultiQuestionDataJpaTest() {
+
+        // given
+        int questionCount = 300;
+        String subject = "테스트 데이터입니다.";
+        String content = "내용 무";
+
+        // when
+        for (int idx = 0; idx < questionCount; idx++) {
+
+            questionService.create(subject.concat(String.format(":[%03d]", idx)), content);
+        }
+
+        // then
     }
 }
