@@ -5,10 +5,13 @@ import com.mysite.jsb.answer.AnswerRepository;
 import com.mysite.jsb.question.Question;
 import com.mysite.jsb.question.QuestionRepository;
 import com.mysite.jsb.question.QuestionService;
+import com.mysite.jsb.user.SiteUser;
+import com.mysite.jsb.user.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -243,11 +246,14 @@ class JsbApplicationTests {
         int questionCount = 300;
         String subject = "테스트 데이터입니다.";
         String content = "내용 무";
+        SiteUser author = new SiteUser();
+        author.setUsername("testuser");
+        author.setPassword(new BCryptPasswordEncoder().encode("1234"));
+        author.setEmail("test@naver.com");
 
         // when
         for (int idx = 0; idx < questionCount; idx++) {
-
-            questionService.create(subject.concat(String.format(":[%03d]", idx)), content);
+            questionService.create(subject.concat(String.format(":[%03d]", idx)), content, author);
         }
 
         // then

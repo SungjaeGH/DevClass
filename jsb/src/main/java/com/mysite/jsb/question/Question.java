@@ -1,6 +1,7 @@
 package com.mysite.jsb.question;
 
 import com.mysite.jsb.answer.Answer;
+import com.mysite.jsb.user.SiteUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,9 @@ public class Question {
     private String content;
 
     private LocalDateTime createDate;
+
+    @ManyToOne
+    private SiteUser author;
 
     /*[CascadeType.REMOVE]
     * 질문을 삭제하면 그에 달린 답변들도 삭제 (연쇄 삭제 하기 위해)*/

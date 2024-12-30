@@ -1,6 +1,8 @@
 package com.mysite.jsb.user;
 
+import com.mysite.jsb.question.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,5 +22,11 @@ public class UserService {
         siteUser.setPassword(passwordEncoder.encode(password));
 
         return userRepository.save(siteUser);
+    }
+
+    public SiteUser getUser(String username) {
+
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new DataNotFoundException("[ " + username + " ] not found."));
     }
 }
