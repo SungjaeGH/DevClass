@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Controller
@@ -119,5 +118,18 @@ public class QuestionController {
 
         questionService.delete(question);
         return "redirect:/";
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/vote/{id}")
+    public String questionVote(Principal principal,
+                               @PathVariable("id") Integer id) {
+
+        Question question = questionService.getQuestion(id);
+        SiteUser user = userService.getUser(principal.getName());
+
+        questionService.vote(question, user);
+
+        return String.format("redirect:/question/detail/%s", id);
     }
 }

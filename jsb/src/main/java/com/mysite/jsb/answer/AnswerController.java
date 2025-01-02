@@ -7,7 +7,6 @@ import com.mysite.jsb.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -88,7 +87,7 @@ public class AnswerController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String answerDelete(@PathVariable("id") Integer id,
-                             Principal principal) {
+                               Principal principal) {
 
         Answer answer = answerService.getAnswer(id);
 
@@ -99,6 +98,18 @@ public class AnswerController {
         answerService.delete(answer);
 
         return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
+    }
 
+    @PreAuthorize("isAuthenticated()")
+    @GetMapping("/vote/{id}")
+    public String answerVote(@PathVariable("id") Integer id,
+                             Principal principal) {
+
+        Answer answer = answerService.getAnswer(id);
+        SiteUser user = userService.getUser(principal.getName());
+
+        answerService.vote(answer, user);
+
+        return String.format("redirect:/question/detail/%s", answer.getQuestion().getId());
     }
 }

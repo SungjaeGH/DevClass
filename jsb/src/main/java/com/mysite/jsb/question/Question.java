@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -38,4 +39,7 @@ public class Question {
     * 질문을 삭제하면 그에 달린 답변들도 삭제 (연쇄 삭제 하기 위해)*/
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
+
+    @ManyToMany
+    private Set<SiteUser> voter;
 }

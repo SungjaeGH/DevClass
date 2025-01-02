@@ -1,6 +1,5 @@
 package com.mysite.jsb.question;
 
-import com.mysite.jsb.question.Question;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
